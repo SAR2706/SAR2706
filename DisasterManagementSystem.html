@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disaster Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-semibold text-blue-600 text-center mb-6">Disaster Management System</h1>
+
+        <div id="login-section" class="bg-white rounded-lg shadow-md p-8 mb-6 max-w-md mx-auto">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Login</h2>
+            <div id="login-error" class="text-red-500 text-sm mb-2" style="display: none;"></div>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Username:</label>
+                    <input type="text" id="username" name="username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                </div>
+                <div>
+                    <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password:</label>
+                    <input type="password" id="password" name="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                </div>
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full">Login</button>
+            </form>
+        </div>
+
+        <div id="user-dashboard" class="bg-white rounded-lg shadow-md p-6 mb-6 max-w-lg mx-auto" style="display: none;">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Welcome, <span id="user-name"></span></h2>
+            <p class="text-gray-600 mb-4">Here's how we can help:</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <button id="view-relief-centers" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">View Relief Centers</button>
+                <button id="report-incident" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Report Incident</button>
+                 <button id="view-my-profile" class="bg-yellow-500 hover:bg-yellow-700 text-gray-900 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">View My Profile</button>
+            </div>
+            <div id="relief-centers-list" class="mt-6" style="display: none;">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">Relief Centers Near You:</h3>
+                <ul id="relief-list" class="list-disc list-inside">
+                    </ul>
+            </div>
+             <div id="incident-report-form" class="mt-6" style="display: none;">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">Report an Incident:</h3>
+                <form id="incident-form" class="space-y-4">
+                    <div>
+                        <label for="incident-type" class="block text-gray-700 text-sm font-bold mb-2">Incident Type:</label>
+                        <select id="incident-type" name="incident-type" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                            <option value="flood">Flood</option>
+                            <option value="earthquake">Earthquake</option>
+                            <option value="fire">Fire</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="incident-location" class="block text-gray-700 text-sm font-bold mb-2">Location:</label>
+                        <input type="text" id="incident-location" name="incident-location" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div>
+                        <label for="incident-description" class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
+                        <textarea id="incident-description" name="incident-description" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+                    </div>
+                    <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full">Submit Report</button>
+                </form>
+            </div>
+            <div id="profile-section" class="mt-6" style="display: none;">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">Your Profile:</h3>
+                <div id="profile-details" class="space-y-2">
+                    <p><span class="font-semibold">Name:</span> <span id="profile-name"></span></p>
+                    <p><span class="font-semibold">Username:</span> <span id="profile-username"></span></p>
+                    <p><span class="font-semibold">Email:</span> <span id="profile-email"></span></p>
+                    <p><span class="font-semibold">Phone:</span> <span id="profile-phone"></span></p>
+                    </div>
+            </div>
+            <button id="logout-button" class="mt-6 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Logout</button>
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('login-form');
+        const loginError = document.getElementById('login-error');
+        const loginSection = document.getElementById('login-section');
+        const userDashboard = document.getElementById('user-dashboard');
+        const userNameDisplay = document.getElementById('user-name');
+        const viewReliefCentersButton = document.getElementById('view-relief-centers');
+        const reliefCentersList = document.getElementById('relief-centers-list');
+        const reliefList = document.getElementById('relief-list');
+        const reportIncidentButton = document.getElementById('report-incident');
+        const incidentReportForm = document.getElementById('incident-report-form');
+        const incidentForm = document.getElementById('incident-form');
+        const logoutButton = document.getElementById('logout-button');
+        const viewMyProfileButton = document.getElementById('view-my-profile');
+        const profileSection = document.getElementById('profile-section');
+        const profileNameDisplay = document.getElementById('profile-name');
+        const profileUsernameDisplay = document.getElementById('profile-username');
+        const profileEmailDisplay = document.getElementById('profile-email');
+        const profilePhoneDisplay = document.getElementById('profile-phone');
+
+        // Sample user data (replace with your actual database query)
+        const users = [
+            { username: 'user1', password: 'password1', name: 'John Doe', email: 'john.doe@example.com', phone: '123-456-7890' },
+            { username: 'user2', password: 'password2', name: 'Jane Smith', email: 'jane.smith@example.com', phone: '987-654-3210' },
+        ];
+
+        // Sample relief center data (replace with your actual database query)
+        const reliefCenters = [
+            { name: 'Relief Center A', location: 'City Center', capacity: 100 },
+            { name: 'Relief Center B', location: 'Town Hall', capacity: 200 },
+            { name: 'Relief Center C', location: 'School Gym', capacity: 150 },
+        ];
+
+         let loggedInUser = null; // Store logged-in user data
+
+        // Function to handle login
+        loginForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const username = loginForm.username.value;
+            const password = loginForm.password.value;
+
+            const user = users.find(u => u.username === username && u.password === password);
+
+            if (user) {
+                loginSection.style.display = 'none';
+                userDashboard.style.display = 'block';
+                userNameDisplay.textContent = user.name;
+                loggedInUser = user; // Store user data
+                loginError.style.display = 'none';
+            } else {
+                loginError.textContent = 'Invalid username or password.';
+                loginError.style.display = 'block';
+            }
+            loginForm.reset();
+        });
+
+        // Function to handle logout
+        logoutButton.addEventListener('click', () => {
+            userDashboard.style.display = 'none';
+            loginSection.style.display = 'block';
+            loggedInUser = null; // Clear logged-in user
+            reliefCentersList.style.display = 'none';
+            incidentReportForm.style.display = 'none';
+            profileSection.style.display = 'none';
+        });
+
+        // Function to display relief centers
+        viewReliefCentersButton.addEventListener('click', () => {
+            reliefList.innerHTML = ''; // Clear previous list
+            reliefCenters.forEach(center => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${center.name} - Location: ${center.location}, Capacity: ${center.capacity}`;
+                reliefList.appendChild(listItem);
+            });
+            reliefCentersList.style.display = 'block';
+            incidentReportForm.style.display = 'none';
+             profileSection.style.display = 'none';
+        });
+
+        // Function to handle incident reporting
+        reportIncidentButton.addEventListener('click', () => {
+            incidentReportForm.style.display = 'block';
+            reliefCentersList.style.display = 'none';
+            profileSection.style.display = 'none';
+        });
+
+        // Function to submit incident report (you would send this data to your server)
+        incidentForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const incidentType = incidentForm['incident-type'].value;
+            const location = incidentForm['incident-location'].value;
+            const description = incidentForm['incident-description'].value;
+
+            // Here, you would typically send this data to your server
+            console.log('Incident Reported:', { incidentType, location, description });
+            alert('Incident reported successfully!'); // Simple feedback
+
+            incidentForm.reset();
+            incidentReportForm.style.display = 'none'; // Hide form after submission
+        });
+
+        //view profile
+        viewMyProfileButton.addEventListener('click', () => {
+            if (loggedInUser) {
+                profileNameDisplay.textContent = loggedInUser.name;
+                profileUsernameDisplay.textContent = loggedInUser.username;
+                profileEmailDisplay.textContent = loggedInUser.email;
+                profilePhoneDisplay.textContent = loggedInUser.phone;
+                profileSection.style.display = 'block';
+                reliefCentersList.style.display = 'none';
+                incidentReportForm.style.display = 'none';
+            }
+        });
+
+    </script>
+</body>
+</html>
